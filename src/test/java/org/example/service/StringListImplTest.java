@@ -13,13 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StringListImplTest {
 
-    StringList stringList = new StringListImpl();
+    private StringList stringList;
 
     @BeforeEach
     public void setUp() {
 
-        stringList.clear();
-
+        stringList = new StringListImpl();
     }
 
     @Test
@@ -27,34 +26,77 @@ class StringListImplTest {
 
         String expected0 = "Диван";
         String expected1 = "Ковер";
-        String expected2 = "Телевизор";
 
         String actual0 = stringList.add(expected0);
         String actual1 = stringList.add(expected1);
-        String actual2 = stringList.add(expected2);
 
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
-        assertEquals(expected2, actual2);
     }
+
+    @Test
+    void testAddItem_NullItem_ThrowsNullItemException() {
+
+        assertThrows(NullItemException.class, () -> stringList.add(null));
+    }
+
+    @Test
+    void testAddItem_StorageIsFull_ThrowsStorageIsFullException() {
+
+        StringListImpl stringList = new StringListImpl(3);
+
+        String expected0 = "Пылесос";
+        String expected1 = "Электроплита";
+        String expected2 = "Диван";
+        String expected3 = "Холодильник";
+
+        stringList.add(expected0);
+        stringList.add(expected1);
+        stringList.add(expected2);
+
+        assertThrows(StorageIsFullException.class, () -> stringList.add(expected3));
+    }
+
 
     @Test
     void testAddIndexItem_CorrectParameters_Success() {
 
         String expected0 = "Холодильник";
-        String expected1 = "Стиральная машина";
-        String expected2 = "Кофемашина";
+        String expected1 = "Кофемашина";
+        String expected2 = "Стиральная машина";
         stringList.add(0,expected0);
-        stringList.add(1,expected1);
-        stringList.add(2,expected2);
+        stringList.add(expected1);
+        stringList.add(1,expected2);
 
         String actual0 = stringList.get(0);
-        String actual1 = stringList.get(1);
-        String actual2 = stringList.get(3);
+        String actual2 = stringList.get(1);
 
         assertEquals(expected0, actual0);
-        assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
+
+    }
+    @Test
+    void testAddIndexItem_NullItem_ThrowsNullItemException() {
+
+        assertThrows(NullItemException.class, () -> stringList.add(1, null));
+
+    }
+
+    @Test
+    void testAddIndexItem_StorageIsFull_ThrowsStorageIsFullException() {
+
+        StringListImpl stringList = new StringListImpl(3);
+
+        String expected0 = "Пылесос";
+        String expected1 = "Электроплита";
+        String expected2 = "Диван";
+        String expected3 = "Холодильник";
+
+        stringList.add(expected0);
+        stringList.add(expected1);
+        stringList.add(expected2);
+
+        assertThrows(StorageIsFullException.class, () -> stringList.add(1, expected3));
 
     }
 
@@ -87,7 +129,31 @@ class StringListImplTest {
     }
 
     @Test
+    void testSetIndexItem_NullItem_ThrowsNullItemException() {
+
+        assertThrows(NullItemException.class, () -> stringList.set(0, null));
+    }
+
+    @Test
+    void testSetIndexItem_InvalidIndex_ThrowsInvalidIndexException() {
+
+        StringList stringList = new StringListImpl(2);
+
+        String expected0 = "Диван";
+        String expected1 = "Шкаф";
+        String expected2 = "Кухонный гарнитур";
+
+        stringList.add(expected0);
+        stringList.add(expected1);
+
+        assertThrows(InvalidIndexException.class, () -> stringList.set(2, expected2));
+
+    }
+
+    @Test
     void testGetIndex_CorrectParameters_Success() {
+
+        StringList stringList = new StringListImpl(3);
 
         String expected0 = "Телевизор";
         String expected1 = "Стол";
@@ -103,6 +169,21 @@ class StringListImplTest {
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
+
+    }
+
+    @Test
+    void testGetIndex_InvalidIndex_ThrowsInvalidIndexException() {
+
+        StringList stringList = new StringListImpl(2);
+
+        String expected0 = "Диван";
+        String expected1 = "Шкаф";
+
+        stringList.add(expected0);
+        stringList.add(expected1);
+
+        assertThrows(InvalidIndexException.class, () -> stringList.get(2));
 
     }
 
@@ -123,12 +204,23 @@ class StringListImplTest {
         String actual0 = stringList.get(0);
         String actual1 = stringList.get(1);
 
-
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
 
-        //assertThrows(ElementNotFoundException.class, () -> stringList.remove("Ковер"));
-        // как проверить отсутствие элемента?
+    }
+
+    @Test
+    void testRemoveItem_NullItem_ThrowsNullItemException() {
+        
+        assertThrows(NullItemException.class, () -> stringList.remove(null));
+
+    }
+    @Test
+    void testRemoveItem_ElementNotFoundException() {
+
+        stringList.add("Пылесос");
+        
+        assertThrows(ElementNotFoundException.class, () -> stringList.remove("Ковер"));
 
     }
 
@@ -151,6 +243,22 @@ class StringListImplTest {
         
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
+    }
+
+    @Test
+    void testRemoveIndex_InvalidIndex_ThrowsInvalidIndexException() {
+
+        StringList stringList = new StringListImpl(3);
+
+        String expected0 = "Диван";
+        String expected1 = "Шкаф";
+        String expected2 = "Кухонный гарнитур";
+
+        stringList.add(expected0);
+        stringList.add(expected1);
+        stringList.add(expected2);
+
+        assertThrows(InvalidIndexException.class, () -> stringList.remove(3));
 
     }
 
@@ -160,48 +268,32 @@ class StringListImplTest {
         stringList.add("Пылесос");
         stringList.add("Холодильник");
         stringList.add("Стиральная машина");
-        stringList.add("Шкаф");
 
         int expected0 = 0;
         int expected1 = 1;
         int expected2 = 2;
-        int expected3 = 3;
 
         int actual0 = stringList.indexOf("Пылесос");
         int actual1 = stringList.indexOf("Холодильник");
         int actual2 = stringList.indexOf("Стиральная машина");
-        int actual3 = stringList.indexOf("Шкаф");
 
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
-        assertEquals(expected3, actual3);
         
     }
 
     @Test
     void testLastIndexOf() {
 
-//        stringList.add("Пылесос");
-//        stringList.add("Холодильник");
-//        stringList.add("Стиральная машина");
-//        stringList.add("Шкаф");
-//
-//        int expected0 = 0;
-//        int expected1 = 1;
-//        int expected2 = 2;
-//        int expected3 = 3;
-//
-//        int actual0 = stringList.lastIndexOf("Пылесос");
-//        int actual1 = stringList.lastIndexOf("Холодильник");
-//        int actual2 = stringList.lastIndexOf("Стиральная машина");
-//        int actual3 = stringList.lastIndexOf("Шкаф");
-//
-//        assertEquals(expected0, actual0);
-//        assertEquals(expected1, actual1);
-//        assertEquals(expected2, actual2);
-//        assertEquals(expected3, actual3);
-        // тест не работает
+        stringList.add("Пылесос");
+        stringList.add("Пылесос");         // Если элемент повторяется, то мы получаем последний индекс этого элемента
+
+        int expected = 1;
+
+        int actual = stringList.lastIndexOf("Пылесос");
+        
+        assertEquals(expected, actual);
         
     }
 
@@ -211,10 +303,8 @@ class StringListImplTest {
         stringList.add("Пылесос");
         stringList.add("Холодильник");
         stringList.add("Стиральная машина");
-        stringList.add("Шкаф");
-        stringList.add("Диван");
 
-        int expected = 5;
+        int expected = 3;
 
         int actual = stringList.size();
 
@@ -233,59 +323,75 @@ class StringListImplTest {
         String expected0 = null;
         String expected1 = null;
         String expected2 = null;
-        String expected9 = null;
         int expected = 0;
 
         String actual0 = stringList.get(0);
         String actual1 = stringList.get(1);
         String actual2 = stringList.get(2);
-        String actual9 = stringList.get(9);
         int actual = stringList.size();
 
         assertEquals(expected0, actual0);
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
-        assertEquals(expected9, actual9);
         assertEquals(expected, actual);
 
     }
 
     @Test
-    void testContains() {
+    void testContains_true() {
 
         stringList.add("Пылесос");
         stringList.add("Холодильник");
         stringList.add("Стиральная машина");
 
-        boolean expected1 = true;
-        boolean actual1 = stringList.contains("Пылесос");
+        boolean expected = true;
+        boolean actual = stringList.contains("Пылесос");
 
-        //boolean expected2 = false;
-        //boolean actual2 = stringList.contains("Ковер");
+        assertEquals(expected, actual);
 
-        assertEquals(expected1, actual1);
-        //assertEquals(expected2, actual2);
-        // проверка на false не работает
-        
     }
 
     @Test
-    void testIsEmpty() {
+    void testContains_false() {
 
         stringList.add("Пылесос");
         stringList.add("Холодильник");
         stringList.add("Стиральная машина");
 
-        boolean expected1 = false;
-        boolean actual1 = stringList.isEmpty();
+        boolean expected = false;
+        boolean actual = stringList.contains("Ковер");
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void testIsEmpty_true() {
+
+        stringList.add("Пылесос");
+        stringList.add("Холодильник");
+        stringList.add("Стиральная машина");
 
         stringList.clear();
 
-        boolean expected2 = true;
-        boolean actual2 = stringList.isEmpty();
+        boolean expected = true;
+        boolean actual = stringList.isEmpty();
 
-        assertEquals(expected1, actual1);
-        assertEquals(expected2, actual2);
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void testIsEmpty_false() {
+
+        stringList.add("Пылесос");
+        stringList.add("Холодильник");
+        stringList.add("Стиральная машина");
+
+        boolean expected = false;
+        boolean actual = stringList.isEmpty();
+
+        assertEquals(expected, actual);
 
     }
 
@@ -294,130 +400,54 @@ class StringListImplTest {
 
         StringList stringList = new StringListImpl(6);
 
-//        stringList.add("Пылесос");
-//        stringList.add("Холодильник");
-//        stringList.add("Стиральная машина");
-//
-//        String[] storage2 = stringList.toArray();
-//
-//        String expected0 = "Пылесос";
-//        String expected1 = "Холодильник";
-//        String expected2 = "Стиральная машина";
-//        String expected3 = null;
-//        int expected = 3;
-//
-//        String actual0 = stringList.get(0);
-//        String actual1 = stringList.get(1);
-//        String actual2 = stringList.get(2);
-//        String actual3 = stringList.get(3);
-//        int actual = stringList.size();
-//
-//        assertEquals(expected0, actual0);
-//        assertEquals(expected1, actual1);
-//        assertEquals(expected2, actual2);
-//        assertEquals(expected3, actual3);
-//        assertEquals(expected, actual);
+        stringList.add("Пылесос");
+        stringList.add("Холодильник");
 
-        // тест не сделал
+        String[] storage2 = stringList.toArray();
+
+        assertEquals(stringList.get(0), storage2[0]);
+        assertEquals(stringList.size(), storage2.length);
         
     }
 
     @Test
-    void testEquals() {
+    void testEquals_true() {
 
-        StringList stringList = new StringListImpl(5);
+        StringList stringList = new StringListImpl();
         stringList.add("Пылесос");
         stringList.add("Холодильник");
         stringList.add("Стиральная машина");
-        stringList.add("Шкаф");
-        stringList.add("Диван");
 
-        StringList stringList2 = new StringListImpl(5);
+        StringList stringList2 = new StringListImpl();
         stringList2.add("Пылесос");
         stringList2.add("Холодильник");
         stringList2.add("Стиральная машина");
+
+        boolean expected = true;
+        boolean actual = stringList.equals(stringList2);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testEquals_false() {
+
+        StringList stringList = new StringListImpl();
+        stringList.add("Пылесос");
+        stringList.add("Холодильник");
+        stringList.add("Стиральная машина");
+
+        StringList stringList2 = new StringListImpl();
+        stringList2.add("Пылесос");
+        stringList2.add("Холодильник");
         stringList2.add("Шкаф");
-        stringList2.add("Диван");
 
-        boolean expected2 = true;
-        boolean actual2 = stringList.equals(stringList2);
+        boolean expected = false;
+        boolean actual = stringList.equals(stringList2);
 
-        StringList stringList3 = new StringListImpl(5);
-        stringList3.add("Пылесос");
-        stringList3.add("Холодильник");
-        stringList3.add("Стиральная машина");
-        stringList3.add("Шкаф");
-        stringList3.add("Гардероб");
-
-        boolean expected3 = false;
-        boolean actual3 = stringList.equals(stringList3);
-
-        assertEquals(expected2, actual2);
-        assertEquals(expected3, actual3);
-    }
-
-    @Test
-    void testInvalidIndexException() {
-
-        StringList stringList = new StringListImpl(3);
-
-        String expected0 = "Диван";
-        String expected1 = "Шкаф";
-        String expected2 = "Кухонный гарнитур";
-        String expected3 = "Стол";
-
-        stringList.add(expected0);
-        stringList.add(expected1);
-        stringList.add(expected2);
-
-        assertThrows(InvalidIndexException.class, () -> stringList.set(3, expected3));
-        assertThrows(InvalidIndexException.class, () -> stringList.remove(3));
-        assertThrows(InvalidIndexException.class, () -> stringList.get(3));
-        
-    }
-
-    @Test
-    void testNullItemException() {
-
-        String expected0 = "Пылесос";
-        String expected1 = "Электроплита";
-        String expected2 = "Холодильник";
-        String expected3 = null;
-
-        stringList.add(expected0);
-        stringList.add(expected1);
-        stringList.add(expected2);
-
-
-        assertThrows(NullItemException.class, () -> stringList.add(1, expected3));
-        assertThrows(NullItemException.class, () -> stringList.add(2, expected3));
-        assertThrows(NullItemException.class, () -> stringList.set(0, expected3));
-        assertThrows(NullItemException.class, () -> stringList.remove(expected3));
+        assertEquals(expected, actual);
 
     }
 
-    @Test
-    void testStorageIsFullException() {
-
-        StringListImpl stringList = new StringListImpl(5);
-
-        String expected0 = "Пылесос";
-        String expected1 = "Электроплита";
-        String expected2 = "Диван";
-        String expected3 = "Холодильник";
-        String expected4 = "Стол";
-        String expected5 = "Стул";
-
-        stringList.add(expected0);
-        stringList.add(expected1);
-        stringList.add(expected2);
-        stringList.add(expected3);
-        stringList.add(expected4);
-
-        assertThrows(StorageIsFullException.class, () -> stringList.add(expected5));
-        assertThrows(StorageIsFullException.class, () -> stringList.add(1, expected5));
-
-    }
-
-
+    
 }

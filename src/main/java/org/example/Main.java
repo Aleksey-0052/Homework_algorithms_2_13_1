@@ -26,6 +26,9 @@ public class Main {
         System.out.println(Arrays.toString(stringList.getStorage()));
         System.out.println("_________________________");
 
+        ((StringListImpl) stringList).print();           // метод print() закастили, поскольку он не указан в интерфейсе
+        System.out.println("_________________________");
+
         System.out.println("Проверка метода - String add(int index, String item)");
         stringList.add(0, "Шкаф");
         stringList.add(2, "Стиральная машина");
@@ -93,12 +96,7 @@ public class Main {
         System.out.println(Arrays.toString(stringList.getStorage()));
         System.out.println("Размер массива: " + stringList.size());
 
-        
-
-
 
     }
-
-
 
 }

@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class StringListImpl implements StringList {
 
-    private String[] storage;
+    private final String[] storage;
 
     private int size;                     // создали переменную, которая будет хранить в себе количество заполненных ячеек
                                           // массива на текущий момент времени
@@ -24,7 +24,7 @@ public class StringListImpl implements StringList {
         storage = new String[initSize];
     }
 
-    public String[] getStorage() {                // создали геттер для вызова массива storage в метод Arrays.toString()
+    public String[] getStorage() {        // создали геттер для вызова массива storage в метод Arrays.toString()
 
         return storage;
     }
@@ -122,7 +122,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int indexOf(String item) {
-        for (int i = 0; i < storage.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (storage[i].equals(item)) {
                 return i;
             }
@@ -132,7 +132,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int lastIndexOf(String item) {
-        for (int i = storage.length - 1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             if (storage[i].equals(item)) {
                 return i;
             }
@@ -210,5 +210,9 @@ public class StringListImpl implements StringList {
         }
     }
 
+    public void print() {                                // данный метод создан только в классе, чтобы не изменять
+                                                         // интерфейс
+        System.out.println(Arrays.toString(storage));
+    }
 
 }
